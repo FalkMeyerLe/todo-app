@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 class UserController(
     private val loginUserHandler: LoginUserRequest.Handler,
     private val registerUserHandler: RegisterUserRequest.Handler,
