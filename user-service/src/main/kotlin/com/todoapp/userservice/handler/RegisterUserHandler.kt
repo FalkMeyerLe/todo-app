@@ -1,4 +1,4 @@
-package com.todoapp.userservice.user
+package com.todoapp.userservice.handler
 
 import com.todoapp.userservice.entity.User
 import com.todoapp.userservice.repository.UserRepository
@@ -14,21 +14,21 @@ data class RegisterUserRequest(
     @field:NotBlank(message = "Password is required")
     @field:Size(min = 6, message = "Password must be at least 6 characters")
     val password: String
-)
-
-@Component
-class RegisterUserHandler(
-    private val userRepository: UserRepository
 ) {
-    fun handle(request: RegisterUserRequest) {
-        if (userRepository.existsByUsername(request.username)) {
-            throw IllegalArgumentException("Error: Username is already taken!")
-        }
+    @Component
+    class Handler(
+        private val userRepository: UserRepository
+    ) {
+        fun handle(request: RegisterUserRequest) {
+            if (userRepository.existsByUsername(request.username)) {
+                throw IllegalArgumentException("Error: Username is already taken!")
+            }
 
-        val user = User(
-            username = request.username,
-            password = request.password,
-        )
-        userRepository.save(user)
+            val user = User(
+                username = request.username,
+                password = request.password,
+            )
+            userRepository.save(user)
+        }
     }
 }
