@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody
 
 
 @RestController
-@RequestMapping("/api/todos")
+@RequestMapping("/todos")
 class TodoController(
     private val createTodoHandler: CreateTodoRequest.Handler,
     private val getTodosByUsernameHandler: GetTodosByUsernameHandler,

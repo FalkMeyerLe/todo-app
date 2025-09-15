@@ -49,7 +49,7 @@ class WebSecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { authz ->
                 authz
-                    .requestMatchers("/api/**").permitAll()
+                    .requestMatchers("/user/**").permitAll()
                     .requestMatchers("/h2-console/**").permitAll()
                     .anyRequest().authenticated()
             }

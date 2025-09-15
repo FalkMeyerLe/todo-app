@@ -29,7 +29,7 @@ class UserController(
         }
     }
 
-    @PostMapping("/signin")
+    @PostMapping("/login")
     fun authenticateUser(@Valid @RequestBody request: LoginUserRequest): ResponseEntity<JwtResponse?> {
         return try {
             val jwtResponse = loginUserHandler.handle(request)
