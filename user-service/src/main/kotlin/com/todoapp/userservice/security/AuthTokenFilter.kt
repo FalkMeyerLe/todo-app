@@ -36,9 +36,17 @@ class AuthTokenFilter(
                 authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
 
                 SecurityContextHolder.getContext().authentication = authentication
+            } else {
+                response.status = HttpServletResponse.SC_UNAUTHORIZED
+                response.writer.write("Unauthorized: Invalid or expired token")
+                response.writer.flush()
+                return
             }
         } catch (e: Exception) {
-            logger.error("Cannot set user authentication: ${e.message}")
+            response.status = HttpServletResponse.SC_FORBIDDEN
+            response.writer.write("Cannot set user authentication: ${e.message}")
+            response.writer.flush()
+            return
         }
 
         filterChain.doFilter(request, response)

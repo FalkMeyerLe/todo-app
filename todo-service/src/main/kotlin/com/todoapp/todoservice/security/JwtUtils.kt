@@ -1,51 +1,35 @@
 package com.todoapp.todoservice.security
 
-import io.jsonwebtoken.ExpiredJwtException
-import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.MalformedJwtException
-import io.jsonwebtoken.UnsupportedJwtException
-import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
-import java.security.Key
+import org.springframework.web.client.RestTemplate
 
 @Component
 class JwtUtils {
 
-    @Value("\${jwt.secret}")
-    private lateinit var jwtSecret: String
+    @Value("\${jwt.validation-url}")
+    private lateinit var tokenValidationUrl: String
 
-    private val key: Key by lazy {
-        Keys.hmacShaKeyFor(jwtSecret.toByteArray())
-    }
-
-    fun getUsernameFromJwtToken(token: String): String {
-        return Jwts.parserBuilder()
-            .setSigningKey(key)
-            .build()
-            .parseClaimsJws(token)
-            .body
-            .subject
-    }
-
-    fun validateJwtToken(authToken: String): Boolean {
-        try {
-            Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(authToken)
-            return true
-        } catch (e: SecurityException) {
-            println("Invalid JWT signature: ${e.message}")
-        } catch (e: MalformedJwtException) {
-            println("Invalid JWT token: ${e.message}")
-        } catch (e: ExpiredJwtException) {
-            println("JWT token is expired: ${e.message}")
-        } catch (e: UnsupportedJwtException) {
-            println("JWT token is unsupported: ${e.message}")
-        } catch (e: IllegalArgumentException) {
-            println("JWT claims string is empty: ${e.message}")
+    fun validateJwtToken(jwt: String): Boolean {
+        val headers = HttpHeaders()
+        headers.set("Authorization", "Bearer $jwt")
+        val requestEntity = HttpEntity<Void>(headers)
+        val restTemplate = RestTemplate()
+         try {
+            val response: ResponseEntity<String> = restTemplate.exchange(
+                tokenValidationUrl,
+                HttpMethod.POST,
+                requestEntity,
+                String::class.java
+            )
+           val  bo = response.statusCode.is2xxSuccessful
+        return    response.statusCode.is2xxSuccessful
+        } catch (e: Exception) {
+        return    false
         }
-        return false
     }
 }
